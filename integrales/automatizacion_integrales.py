@@ -208,6 +208,7 @@ with open('doc_integrales/realcion_integrales_enero_2021.txt') as file:
             elemento = opciones.find_element_by_xpath('//*[@id="tbl_comprobantes_detalles"]/tbody/tr[1]/td[1]/i[2]')
             driver.execute_script("btn_abrir_modal(this,"+ str(cont) +");")
             time.sleep(3)
+            
             #borrando comas
             elemento = driver.find_elements_by_id('camp_adicional_19')                  
             elemento[0].clear()      

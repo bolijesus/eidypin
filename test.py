@@ -38,6 +38,10 @@ def borrar(filein, linea_a_buscar=None):
         fout.close()
     except IndexError:
         print('no hay mas datos')
+        
+a ="hola mundo"
+b="hola mundo"
 
-borrar_x_busqueda('doc_integrales/datos.txt', "ANGELA IGUARAN,1121305813,G809,2021003921,\n")
+if a != b :
+    print('entro')
 
