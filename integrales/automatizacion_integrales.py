@@ -15,33 +15,22 @@ from selenium.webdriver import ActionChains
 
 
 driver = webdriver.Chrome(executable_path=r"C:\dchrome\chromedriver.exe")
-driver.get("http://eidykos.com/Eidypymes/login.jsp#nav215")
+driver.get("http://62.171.155.205/Eidypymes/login.jsp")
 
 nombre_usuario = "JBOLIVAR"
 clave_usuario = "123456789"
 fecha_ingreso = "08-01-2021"
 # fonseca -> "FON001" , sanjuan -> "SNJ001", maicao-> "MAI001"
-sede = "FON001"
+sede = "MAI001"
 costo_terapias = "12222"
+cantidad_terapias = "45"
 #archivo a donde iran los que no estan liquidados
-file_no_liquidados = 'doc_integrales/sin_liquidar.txt'
+file_no_liquidados = 'integrales/doc_integrales/sin_liquidar.txt'
 
 paciente_sin_liquidar = False
 #fecha de hoy
 hoy = datetime.now()
-dia = hoy.day
-mes = hoy.month
-año = str(hoy.year)
-
-if mes >= 1 or mes <= 9:
-    
-    mes = "0"+ str(mes)
-    
-if dia >= 1 or dia <= 9:
-    
-    dia = "0"+ str(dia)
-
-fecha_parseada = dia + "-" + mes + "-" + año
+hoy = hoy.strftime('%d-%m-%Y')
 #ingresando usuario
 usuario = driver.find_element_by_id("usuario")
 usuario.send_keys(nombre_usuario) 
@@ -49,12 +38,13 @@ usuario.send_keys(nombre_usuario)
 #ingresando password
 clave = driver.find_element_by_id("password")
 clave.send_keys(clave_usuario)
+
 clave.send_keys(Keys.ENTER)
 time.sleep(2)
-driver.get("http://eidykos.com/Eidypymes/index.jsp#nav1")
+driver.get("http://62.171.155.205/Eidypymes/index.jsp#nav1")
 
 def sin_liquidar(paciente):
-    with open('doc_integrales/sin_liquidar.txt','a') as file:
+    with open('integrales/doc_integrales/sin_liquidar.txt','a') as file:
         file.write(paciente)
         file.close()
 
@@ -75,7 +65,7 @@ def borrar(filein, linea_a_buscar=None):
     except IndexError:
         print('no hay mas datos')
 
-with open('doc_integrales/realcion_integrales_enero_2021.txt') as file:
+with open('integrales/doc_integrales/realcion_integrales_enero_2021.txt') as file:
     for i, line in enumerate(file):
         integral = (line)
         separador = ","
@@ -111,7 +101,7 @@ with open('doc_integrales/realcion_integrales_enero_2021.txt') as file:
         #fecha de hoy en el date picker
         elemento = driver.find_element_by_xpath('//*[@id="fec_comprobante"]')
         elemento.clear()
-        elemento.send_keys(fecha_parseada)
+        elemento.send_keys(hoy)
         elemento.send_keys(Keys.TAB)  
         
         #originar de
@@ -160,7 +150,7 @@ with open('doc_integrales/realcion_integrales_enero_2021.txt') as file:
         for opcion in elementos_select:
             print('entro al for')            
             alerta_sin_liquidar_x_id = driver.find_element_by_xpath('//*[@id="div_mensaje_admisiones"]')
-            if opcion.get_attribute("data-cant_servicios") == "45" and opcion.get_attribute("data-fec_ingreso") == fecha_ingreso:
+            if opcion.get_attribute("data-cant_servicios") == cantidad_terapias :#and opcion.get_attribute("data-fec_ingreso") == fecha_ingreso:
                 numeros_servicios = opcion
                 paciente_sin_liquidar = False
                 break
@@ -196,8 +186,16 @@ with open('doc_integrales/realcion_integrales_enero_2021.txt') as file:
         seleccion = seleccionar.first_selected_option
 
         #nro.autorizacion
-        elemento = driver.find_element_by_xpath('//*[@id="camp_adicional_12"]')
+        # elemento = driver.find_element_by_xpath('//*[@id="camp_adicional_12"]')
+        elemento = driver.find_element_by_id('camp_adicional_12')
+        
+        ActionChains(driver).move_to_element(elemento).perform()
+        elemento.clear()
+        
+        ActionChains(driver).move_to_element(elemento).send_keys(nua).perform()
         elemento.send_keys(nua)
+        
+        
         
         #detalles
         elemento = driver.find_element_by_xpath('//*[@id="tbl_comprobantes_detalles"]/tbody')
